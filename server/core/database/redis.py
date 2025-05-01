@@ -3,7 +3,7 @@ from server.core.logging import logger
 from server.core.config import settings
 
 
-async def connect_redis():
+async def connect_redis(show_log: bool = True):
     redis_client = Redis(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
@@ -16,8 +16,10 @@ async def connect_redis():
 
     try:
         if await redis_client.ping():
-            logger.info("Успешное подключение к Redis.")
+            if show_log:
+                logger.info("Успешное подключение к Redis.")
             return redis_client
     except Exception as e:
-        logger.critical("Ошибка подключения к redis: %s", e, exc_info=True)
+        if show_log:
+            logger.critical("Ошибка подключения к redis: %s", e, exc_info=True)
         return None

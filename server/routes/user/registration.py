@@ -1,0 +1,66 @@
+from secrets import token_urlsafe
+
+from fastapi import status, Request
+from fastapi.responses import JSONResponse
+from pymongo.errors import DuplicateKeyError
+from sqlalchemy import insert
+
+from server import app, db, client, engine
+from server.core.api.schemes import UserRegistration
+from server.core.api.configuringsqldb import registration_logs
+from server.core.functions.mongodb import check_connection
+from server.core.functions.hash import create_hash
+from server.core.logging import logger
+from server.core.config import settings
+
+
+@app.post("/v1/user/registration", tags=["user", "post"])
+async def registration(data: UserRegistration, request: Request) -> JSONResponse:
+    if not await check_connection(client):
+        return JSONResponse(
+            content={"status": False, "message": "Error connecting to the database. Internal Server Error."},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    for field in ("login", "mail", "phone"):
+        if await db["users"].find_one({field: getattr(data, field)}):
+            return JSONResponse(
+                content={"status": False, "message": f"{field.capitalize()} already exists. Conflict."},
+                status_code=status.HTTP_409_CONFLICT)
+
+    password = create_hash(text=data.password)
+    token = token_urlsafe(64)
+
+    try:
+        await db["users"].insert_one({
+            "login": data.login,
+            "mail": data.mail,
+            "phone": data.phone,
+            "password": password,
+            "token": token,
+            "lastip": request.headers.get("x-forwarded-for", request.client.host)
+        })
+        response = JSONResponse(
+            content={"status": True, "message": "Successful registration. Created."},
+            status_code=status.HTTP_201_CREATED)
+        response.set_cookie(key="token", value=token, domain=f".{settings.DOMAIN}", secure=True, httponly=True, samesite="Strict", max_age=3*24*60*60)
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(insert(registration_logs), {
+                    "login": data.login,
+                    "ip_address": request.headers.get("x-forwarded-for", request.client.host),
+                    "user_agent": request.headers.get("user-agent", "unknown")
+                })
+        except Exception as e:
+            logger.warning("Failed to write login_log for %s: %s", data.login, e)
+
+        return response
+
+    except DuplicateKeyError:
+        return JSONResponse(
+            content={"status": False, "message": "Account with provided credentials already exists."},
+            status_code=status.HTTP_409_CONFLICT)
+    except Exception as e:
+        logger.error("Registration failed: %s", e, exc_info=True)
+        return JSONResponse(
+            content={"status": False, "message": "Internal Server Error."},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

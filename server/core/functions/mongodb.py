@@ -1,33 +1,44 @@
 from typing import Optional
 from pymongo.errors import ConnectionFailure
+from fastapi import Request
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from server.core.logging import logger
 from server.core.config import settings
 
-async def check_auth(request, database) -> Optional[dict]:
+async def get_user(request: Request, database: AsyncIOMotorDatabase) -> Optional[dict]:
     token = request.cookies.get('token')
     if not token:
         return None
-    return await database["users"].find_one({"token": token})
+    try:
+        return await database["users"].find_one({"token": token})
+    except Exception as e:
+        logger.error("Ошибка при получении пользователя: %s", e, exc_info=True)
+        return None
 
-async def check_permissions(request, permission: str, database) -> bool:
-    user = await check_auth(request, database)
+async def check_auth(request: Request, database: AsyncIOMotorDatabase) -> bool:
+    return await get_user(request, database) is not None
+
+async def check_permissions(request: Request, permission: str, database: AsyncIOMotorDatabase) -> bool:
+    user = await get_user(request, database)
     if not user:
         return False
 
-    permissions = user.get("permissions")
+    permissions = user.get("permissions") or {}
     if not isinstance(permissions, dict):
-        permissions = {}
+        return False
 
-    if permissions.get("dev", False) and settings.DEV:
+    if permissions.get("dev") and settings.DEV:
         return True
 
-    return permissions.get("all", False) or permissions.get(permission, False)
+    return bool(permissions.get("all") or permissions.get(permission))
 
 async def check_connection(mongo) -> bool:
     try:
         await mongo.admin.command('ping')
         return True
-    except ConnectionFailure:
+    except ConnectionFailure as cf:
+        logger.error("Ошибка подключения к MongoDB: %s", cf, exc_info=True)
         return False
     except Exception as e:
-        print(f"Неожиданная ошибка: {e}")
+        logger.error("Неожиданная ошибка при проверке соединения: %s", e, exc_info=True)
         return False

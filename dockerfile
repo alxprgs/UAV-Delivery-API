@@ -1,6 +1,9 @@
 FROM python:3.13.0-slim
 
-ARG SERVER_PORT
+ENV SERVER_PORT=${SERVER_PORT}
+
+HEALTHCHECK --interval=30s CMD curl -f http://localhost:$SERVER_PORT/health || exit 1
+
 
 RUN apt-get update && apt-get install -y \
     libgl1 \
