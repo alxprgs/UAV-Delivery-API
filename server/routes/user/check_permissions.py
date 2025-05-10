@@ -1,5 +1,6 @@
+from fastapi import Query, Request
+
 from server import app, db
-from fastapi import Request, Query
 from server.core.functions.mongodb import check_permissions
 
 @app.get("/v1/user/check_permissions", tags=["user", "get"])

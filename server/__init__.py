@@ -1,16 +1,19 @@
-from fastapi import FastAPI, Request
-from server.core.config import settings
-from .core.tags_metadata import tags_metadata
-from .core.database.mongodb import connect_mongo
-from .core.database.mysql import connect_mysql
-from .core.database.redis import connect_redis
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
+
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
+
 from server.core.api.configuringmongodb import conf_mongodb
-from server.core.root_user import root_user
 from server.core.api.configuringsqldb import metadata
+from server.core.config import settings
+from server.core.database.mongodb import connect_mongo
+from server.core.database.mysql import connect_mysql
+from server.core.database.redis import connect_redis
+from server.core.root_user import root_user
+from server.core.tags_metadata import tags_metadata
+
 
 class BlockMethodsMiddleware(BaseHTTPMiddleware):
     ALLOWED_METHODS = {"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"}
@@ -23,6 +26,7 @@ class BlockMethodsMiddleware(BaseHTTPMiddleware):
             )
         return await call_next(request)
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     global db, client, engine, redis_client
@@ -34,7 +38,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     redis_client = await connect_redis(show_log=True)
     await root_user()
     from server.routes.user import registration, login, logout, check_auth, check_permissions, set_permission
-    from server.routes.files import robots, sitemap
+    from server.routes.files import robots, sitemap, ddos_tester
     yield
     if client:
         client.close()
@@ -43,11 +47,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     if redis_client:
         await redis_client.close()
 
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     openapi_tags=tags_metadata,
-    lifespan=lifespan,  
+    lifespan=lifespan,
     license_info={
         "name": "Apache 2.0",
         "url": "https://github.com/alxprgs/UAV-Delivery-API?tab=Apache-2.0-1-ov-file#",

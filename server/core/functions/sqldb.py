@@ -1,6 +1,8 @@
-from server.core.database.mysql import connect_mysql
 from sqlalchemy import insert
+
 from server.core.api.configuringsqldb import system_logs
+from server.core.database.mysql import connect_mysql
+
 
 async def log_system(message: str):
     engine = await connect_mysql(show_log=False)

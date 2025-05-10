@@ -1,11 +1,12 @@
-from server import app, db, engine
-from server.core.logging import logger
-from server.core.functions.mongodb import check_permissions, get_user
-from fastapi import status, Request
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
-from server.core.api.schemes import UserSetPermission
 from sqlalchemy import insert
+
+from server import app, db, engine
 from server.core.api.configuringsqldb import permission_logs
+from server.core.api.schemes import UserSetPermission
+from server.core.functions.mongodb import check_permissions, get_user
+from server.core.logging import logger
 
 @app.patch("/v1/user/set_permissions", tags=["user", "patch"])
 async def set_permissions(request: Request, data: UserSetPermission) -> JSONResponse:

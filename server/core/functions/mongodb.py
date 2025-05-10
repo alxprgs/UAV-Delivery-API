@@ -1,9 +1,11 @@
 from typing import Optional
-from pymongo.errors import ConnectionFailure
+
 from fastapi import Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from server.core.logging import logger
+from pymongo.errors import ConnectionFailure
+
 from server.core.config import settings
+from server.core.logging import logger
 
 async def get_user(request: Request, database: AsyncIOMotorDatabase) -> Optional[dict]:
     token = request.cookies.get('token')

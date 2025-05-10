@@ -1,6 +1,8 @@
+from xml.etree.ElementTree import Element, SubElement, tostring
+
 from fastapi import Request
 from starlette.responses import Response
-from xml.etree.ElementTree import Element, SubElement, tostring
+
 from server import app, redis_client
 
 BASE_URL = "https://api.asfes.ru"

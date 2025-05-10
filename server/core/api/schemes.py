@@ -1,9 +1,12 @@
-from pydantic import BaseModel, Field, EmailStr, model_validator
-from fastapi import Query
-from pydantic_extra_types.phone_numbers import PhoneNumber
 from typing_extensions import Self
-from server.core.functions.hash import create_hash
+
+from fastapi import Query
+from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic_extra_types.phone_numbers import PhoneNumber
+
 from server.core.config import settings
+from server.core.functions.hash import create_hash
+
 
 class UserRegistration(BaseModel):
     login: str = Field(..., max_length=32, min_length=3, description="Unique username for registration")

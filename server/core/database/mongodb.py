@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from server.core.logging import logger
+
 from server.core.config import settings
+from server.core.logging import logger
 
 async def connect_mongo(show_log: bool = True):
     try:

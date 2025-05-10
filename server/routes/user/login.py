@@ -1,16 +1,16 @@
 from secrets import token_urlsafe
 
-from fastapi import status, Request
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy import insert
 
-from server import app, db, client, engine
-from server.core.api.schemes import UserAuthorization
+from server import app, client, db, engine
 from server.core.api.configuringsqldb import login_logs
-from server.core.functions.mongodb import check_connection
-from server.core.functions.hash import verify_hash
-from server.core.logging import logger
+from server.core.api.schemes import UserAuthorization
 from server.core.config import settings
+from server.core.functions.hash import verify_hash
+from server.core.functions.mongodb import check_connection
+from server.core.logging import logger
 
 @app.post("/v1/user/login", tags=["user", "post"])
 async def аuthorization(data: UserAuthorization, request: Request) -> JSONResponse:

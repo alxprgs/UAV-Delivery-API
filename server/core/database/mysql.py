@@ -1,8 +1,10 @@
-from server.core.logging import logger
-from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
-from server.core.config import settings
+from sqlalchemy.ext.asyncio import create_async_engine
+
 from server.core.api.configuringsqldb import metadata
+from server.core.config import settings
+from server.core.logging import logger
+
 
 async def connect_mysql(show_log: bool = True):
     engine = create_async_engine(settings.MYSQL_URL)

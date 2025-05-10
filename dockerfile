@@ -1,7 +1,5 @@
 FROM python:3.13.0-slim
 
-ENV SERVER_PORT=${SERVER_PORT}
-
 HEALTHCHECK --interval=30s CMD curl -f http://localhost:$SERVER_PORT/health || exit 1
 
 
@@ -19,6 +17,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+
+ENV SERVER_PORT=${SERVER_PORT}
 
 EXPOSE ${SERVER_PORT}
 CMD ["python", "run.py"]

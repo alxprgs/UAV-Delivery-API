@@ -1,6 +1,7 @@
 from redis.asyncio import Redis
-from server.core.logging import logger
+
 from server.core.config import settings
+from server.core.logging import logger
 
 
 async def connect_redis(show_log: bool = True):
