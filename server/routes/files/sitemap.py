@@ -1,6 +1,5 @@
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from fastapi import Request
 from starlette.responses import Response
 
 from server import app, redis_client
@@ -8,7 +7,7 @@ from server import app, redis_client
 BASE_URL = "https://api.asfes.ru"
 
 @app.get("/sitemap.xml", include_in_schema=False)
-async def sitemap(request: Request):
+async def sitemap():
     cache_key = "sitemap.xml"
     cached = await redis_client.get(cache_key)
     if cached:

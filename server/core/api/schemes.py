@@ -1,7 +1,7 @@
 from typing_extensions import Self
 
 from fastapi import Query
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator, field_validator
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 from server.core.config import settings
@@ -45,3 +45,21 @@ class UserSetPermission(BaseModel):
     value: bool = Query(..., description="New value of the permission (true or false)")
     permission: str = Query(..., min_length=1, description="Name of the permission to change or set")
     login: str = Query(..., min_length=4, max_length=32, description="User login")
+
+class CreateOrder(BaseModel):
+    coordinates: str = Field(..., description="Coordinates in 'lat,lon' format")
+    delivered: dict = Field(..., description="Delivery facilities with item names as keys and their costs as values")
+    cost_delivered: float = Field(default=0, description="Cost of delivery in rubles (calculated automatically)")
+
+    @field_validator("coordinates")
+    def parse_coordinates(cls, v):
+        try:
+            lat, lon = v.split(",")
+            return (float(lat), float(lon))
+        except Exception:
+            raise ValueError("Use 'lat,lon' format")
+
+    @model_validator(mode='after')
+    def calculate_cost_delivered(self) -> Self:
+        self.cost_delivered = sum(self.delivered.values())
+        return self
