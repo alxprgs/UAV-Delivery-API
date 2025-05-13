@@ -5,6 +5,8 @@ from fastapi.responses import JSONResponse
 from pymongo.errors import DuplicateKeyError
 from sqlalchemy import insert
 
+from datetime import datetime, timedelta
+
 from server import app, client, db, engine
 from server.core.api.configuringsqldb import registration_logs
 from server.core.api.schemes import UserRegistration
@@ -13,6 +15,9 @@ from server.core.functions.hash import create_hash
 from server.core.functions.mongodb import check_connection
 from server.core.logging import logger
 
+MAX_REG_ATTEMPTS = 5
+REG_WINDOW_MINUTES = 30
+
 
 @app.post("/v1/user/registration", tags=["user", "post"])
 async def registration(data: UserRegistration, request: Request) -> JSONResponse:
@@ -20,6 +25,24 @@ async def registration(data: UserRegistration, request: Request) -> JSONResponse
         return JSONResponse(
             content={"status": False, "message": "Error connecting to the database. Internal Server Error."},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    now = datetime.now()
+    window_start = now - timedelta(minutes=REG_WINDOW_MINUTES)
+    reg_attempts_coll = db["registration_attempts"]
+    ip = request.headers.get("x-forwarded-for", request.client.host)
+    attempts = await reg_attempts_coll.count_documents({
+        "ip": ip,
+        "timestamp": {"$gte": window_start}
+    })
+    if attempts >= MAX_REG_ATTEMPTS:
+        return JSONResponse(
+            content={"status": False, "message": f"Превышено количество попыток регистрации. Попробуйте снова через {REG_WINDOW_MINUTES} минут."},
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS
+        )
+    await reg_attempts_coll.insert_one({
+        "ip": ip,
+        "timestamp": now
+    })
 
     for field in ("login", "mail", "phone"):
         if await db["users"].find_one({field: getattr(data, field)}):

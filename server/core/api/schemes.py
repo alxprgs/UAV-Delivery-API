@@ -1,4 +1,5 @@
 from typing_extensions import Self
+from decimal import Decimal
 
 from fastapi import Query
 from pydantic import BaseModel, EmailStr, Field, model_validator, field_validator
@@ -61,5 +62,5 @@ class CreateOrder(BaseModel):
 
     @model_validator(mode='after')
     def calculate_cost_delivered(self) -> Self:
-        self.cost_delivered = sum(self.delivered.values())
+        self.cost_delivered = sum(Decimal(v) for v in self.delivered.values())
         return self

@@ -18,11 +18,30 @@ AIRPORTS = {
     "VKO": (55.603952, 37.274554)
 }
 
-@app.post("/v1/orders/create_order", tags=["orders", "post"])
+@app.post(
+    "/v1/orders/create_order",
+    tags=["orders", "post"],
+    openapi_extra={
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "coordinates": "55.7558, 37.6173",
+                        "delivered": {
+                            "iPhone 14": "79990.00",
+                            "MacBook Air": "119990.00"
+                        },
+                        "cost_delivered": "0"
+                    }
+                }
+            }
+        }
+    }
+)
 async def create_order(request: Request, data: CreateOrder):
     user = await get_user(request, db)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=401, detail="User not found")
 
     lat, lon = data.coordinates
     nearest = min(AIRPORTS, key=lambda a: geodesic((lat, lon), AIRPORTS[a]).kilometers)
@@ -40,7 +59,7 @@ async def create_order(request: Request, data: CreateOrder):
     Configuration.account_id = settings.YOOKASSA_SHOP_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
-    delivered_items_cost = sum(Decimal(price) for _, price in data.delivered.items())
+    delivered_items_cost = sum(Decimal(price) for price in data.delivered.values())
     final_cost = (cost + delivery_fee + delivered_items_cost).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
     receipt_customer = {}
