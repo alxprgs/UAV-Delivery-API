@@ -18,6 +18,7 @@ AIRPORTS = {
     "VKO": (55.603952, 37.274554)
 }
 
+#Обновить в скорейшем времени
 @app.post(
     "/v1/orders/create_order",
     tags=["orders", "post"],

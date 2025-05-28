@@ -1,5 +1,6 @@
 from typing_extensions import Self
 from decimal import Decimal
+import re
 
 from fastapi import Query
 from pydantic import BaseModel, EmailStr, Field, model_validator, field_validator
@@ -64,3 +65,26 @@ class CreateOrder(BaseModel):
     def calculate_cost_delivered(self) -> Self:
         self.cost_delivered = sum(Decimal(v) for v in self.delivered.values())
         return self
+    
+class AddUAVScheme(BaseModel):
+    name: str = Field(..., min_length=1, max_length=32, description="Name of the UAV")
+    location: str = Field(..., min_length=1, max_length=32, description="Current location of the UAV")
+    max_weight: float = Field(..., gt=0, description="Maximum weight the UAV can carry in kg")
+    max_speed: float = Field(..., gt=0, description="Maximum speed of the UAV in km/h")
+    serial_number: str = Field(..., min_length=1, max_length=32, description="Serial number of the UAV")
+    battery_capacity: float = Field(..., gt=0, description="Battery capacity of the UAV in mAh")
+    battery_voltage: float = Field(..., gt=0, description="Battery voltage of the UAV in V")
+    battery_charge: float = Field(..., ge=0, description="Current battery charge of the UAV in mAh")
+    battery_status: bool = Field(..., description="True if battery is installed, False if not")
+
+    @field_validator("serial_number")
+    def validate_serial_number(cls, v):
+        if not re.fullmatch(r"\d{4}-\d{4}", v):
+            raise ValueError("serial_number must be in format 0000-0000")
+        return v
+
+class AddBaseScheme(BaseModel):
+    name: str = Field(..., min_length=1, max_length=32, description="Name of the base")
+    location: str = Field(..., min_length=1, max_length=32, description="Location of the base")
+    max_uavs: int = Field(..., gt=0, description="Maximum number of UAVs that can be at the base at the same time")
+    max_uav_weight: float = Field(..., gt=0, description="Maximum weight of UAVs that can be at the base at the same time in kg")

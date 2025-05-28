@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     DEV: bool = False
     CORS_ORIGINS: list[str] = ["*"]
     SERVER_PORT: int = 5005
-    PROJECT_NAME: str = "API for a website for delivery to impassable places using UAVs"
-    VERSION: str = "DEV 2.2.1 | Build 14.05.2025"
+    PROJECT_NAME: str = "API for a website for delivery using UAVs"
+    VERSION: str = "DEV 2.2.2 | Build 29.05.2025"
     ROOTUSER_PASSWORD: str = "root"
     DOMAIN: str = "api.asfes.ru"
     TEST_BASE_URL: str = "api.asfes.ru",

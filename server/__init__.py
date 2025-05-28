@@ -40,6 +40,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     from server.routes.user import registration, login, logout, check_auth, check_permissions, set_permission
     from server.routes.files import robots, sitemap, ddos_tester
     from server.routes.orders import create_order
+    from server.routes.uav import add_uav
     yield
     if client:
         client.close()
