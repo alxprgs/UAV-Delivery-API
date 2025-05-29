@@ -8,7 +8,7 @@ from server.core.api.schemes import UserSetPermission
 from server.core.functions.mongodb import check_permissions, get_user
 from server.core.logging import logger
 
-@app.patch("/v1/user/set_permissions", tags=["user", "patch"])
+@app.patch("/v1/user/set_permissions", tags=["user", "patch"], summary="Set User Permissions", description="Allows an admin to set permissions for a user.")
 async def set_permissions(request: Request, data: UserSetPermission) -> JSONResponse:
     if await check_permissions(request=request, database=db, permission="set_permissions"):
         try:

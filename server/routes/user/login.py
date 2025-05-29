@@ -17,7 +17,7 @@ from server.core.logging import logger
 MAX_ATTEMPTS = 5
 WINDOW_MINUTES = 15
 
-@app.post("/v1/user/login", tags=["user", "post"])
+@app.post("/v1/user/login", tags=["user", "post"], summary="User Login", description="Allows a user to log in with their credentials.")
 async def аuthorization(data: UserAuthorization, request: Request) -> JSONResponse:
     if not await check_connection(client):
         return JSONResponse(

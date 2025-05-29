@@ -22,23 +22,14 @@ AIRPORTS = {
 @app.post(
     "/v1/orders/create_order",
     tags=["orders", "post"],
-    openapi_extra={
-        "requestBody": {
-            "content": {
-                "application/json": {
+    openapi_extra={"requestBody": {"content": {"application/json": {
                     "example": {
                         "coordinates": "55.7558, 37.6173",
                         "delivered": {
                             "iPhone 14": "79990.00",
                             "MacBook Air": "119990.00"
                         },
-                        "cost_delivered": "0"
-                    }
-                }
-            }
-        }
-    }
-)
+                        "cost_delivered": "0"}}}}}, summary="Create Order", description="Creates a new order for delivery based on user coordinates and items to be delivered.")
 async def create_order(request: Request, data: CreateOrder):
     user = await get_user(request, db)
     if not user:

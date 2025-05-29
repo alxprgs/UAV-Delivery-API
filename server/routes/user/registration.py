@@ -19,7 +19,7 @@ MAX_REG_ATTEMPTS = 5
 REG_WINDOW_MINUTES = 30
 
 
-@app.post("/v1/user/registration", tags=["user", "post"])
+@app.post("/v1/user/registration", tags=["user", "post"], summary="User Registration", description="Allows a user to register with their credentials.")
 async def registration(data: UserRegistration, request: Request) -> JSONResponse:
     if not await check_connection(client):
         return JSONResponse(
