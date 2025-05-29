@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from server.core.api.schemes import AddBaseScheme
 from server.core.functions.mongodb import check_permissions
 
+
 @app.post("/v1/base/add_base", tags=["base", "post"], summary="Add new base", description="Adds a new base to the database if user has the required permissions.")
 async def add_base(request: Request, data: AddBaseScheme) -> JSONResponse:
     prmission = await check_permissions(request=request, permission="add_base", database=db)

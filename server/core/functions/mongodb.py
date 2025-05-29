@@ -44,3 +44,9 @@ async def check_connection(mongo) -> bool:
     except Exception as e:
         logger.error("Неожиданная ошибка при проверке соединения: %s", e, exc_info=True)
         return False
+
+async def get_user_login(request: Request, database: AsyncIOMotorDatabase) -> Optional[str]:
+    user = await get_user(request, database)
+    if user:
+        return user.get("login")
+    return None
