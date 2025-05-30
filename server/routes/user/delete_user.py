@@ -23,7 +23,7 @@ async def delete_user(request: Request, data: UserDelete) -> JSONResponse:
                 content={"status": False, "message": "User not found."}
             )
         
-        user_login = await get_user_login(request=request)
+        user_login = await get_user_login(request=request, database=db)
         await log_system(
             message=f"User '{data.login}' deleted by {user_login}."
         )

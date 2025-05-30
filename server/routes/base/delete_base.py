@@ -23,7 +23,7 @@ async def delete_base(request: Request, data: DeleteBaseScheme) -> JSONResponse:
                 content={"status": False, "message": "Base not found."}
             )
         
-        user_login = await get_user_login(request=request)
+        user_login = await get_user_login(request=request, database=db)
         await log_system(
             message=f"Base '{data.name}' deleted {user_login}."
         )

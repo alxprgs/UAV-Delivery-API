@@ -112,6 +112,7 @@ class CreateOrder(BaseModel):
 class AddUAVScheme(BaseModel):
     name: str = Field(..., min_length=1, max_length=32, description="Name of the UAV")
     location: str = Field(..., min_length=1, max_length=32, description="Current location of the UAV")
+    coordinates: Tuple[float, float] = Field(..., description="Coordinates of the UAV as (lat, lon)")
     max_weight: float = Field(..., gt=0, description="Maximum weight the UAV can carry in kg")
     max_speed: float = Field(..., gt=0, description="Maximum speed of the UAV in km/h")
     serial_number: str = Field(..., min_length=1, max_length=32, description="Serial number of the UAV")
@@ -125,6 +126,29 @@ class AddUAVScheme(BaseModel):
         if not re.fullmatch(r"\d{4}-\d{4}", v):
             raise ValueError("serial_number must be in format 0000-0000")
         return v
+    
+    @field_validator("coordinates", mode='before')
+    def parse_coordinates(cls, v: str) -> Tuple[float, float]:
+        try:
+            lat, lon = v.split(",")
+            return (float(lat), float(lon))
+        except Exception:
+            raise ValueError("Use 'lat,lon' format")
+    
+class SetUavDataScheme(BaseModel):
+    location: str = Field(..., min_length=1, max_length=32, description="New location of the UAV")
+    coordinates: Tuple[float, float] = Field(..., description="New coordinates of the UAV as (lat, lon)")
+    carryweight: float = Field(..., gt=0, description="New carry weight of the UAV in kg")
+    serial_number: str = Field(..., min_length=1, max_length=32, description="Serial number of the UAV to update")
+    battery_voltage: float = Field(..., gt=0, description="New battery voltage of the UAV in V")
+    battery_charge: float = Field(..., ge=0, description="New current battery charge of the UAV in mAh")
+    battery_status: bool = Field(..., description="True if battery is installed, False if not")
+    @field_validator("serial_number", mode='before')
+    def validate_serial_number(cls, v: str) -> str:
+        if not re.fullmatch(r"\d{4}-\d{4}", v):
+            raise ValueError("serial_number must be in format 0000-0000")
+        return v
+
 
 class AddBaseScheme(BaseModel):
     name: str = Field(..., min_length=1, max_length=32, description="Name of the base")

@@ -27,7 +27,7 @@ async def set_permissions(request: Request, data: UserSetPermission) -> JSONResp
 
             async with engine.begin() as conn:
                 await conn.execute(
-                    insert(permission_logs),{"message": f"User '{actor_login}' set permission '{data.permission}' to '{data.value}' for user '{data.login}'"})
+                    insert(permission_logs),{"message": f"User '{actor_login}' set permission '{data.permission}' to '{data.value}' for user '{data.login}'. Reason: {data.reason}"})
 
             return JSONResponse(
                 content={"status": True, "message": "Successful change of permission. Ok."},

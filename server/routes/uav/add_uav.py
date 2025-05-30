@@ -31,8 +31,9 @@ async def add_uav(data: AddUAVScheme, request: Request) -> JSONResponse:
         await db["uav"].insert_one({
             "name": data.name,
             "location": data.location,
-            "max_weight": data.max_weight,
-            "max_speed": data.max_speed,
+            "coordinates": data.coordinates,
+            "max_weigh_speedt": data.max_weight,
+            "max": data.max_speed,
             "serial_number": data.serial_number,
             "battery": {
                 "battery_capacity": data.battery_capacity,

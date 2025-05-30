@@ -18,7 +18,7 @@ AIRPORTS = {
     "VKO": (55.603952, 37.274554)
 }
 
-#Обновить в скорейшем времени
+#Обновить в скорейшем времени, всё еще надо
 @app.post(
     "/v1/orders/create_order",
     tags=["orders", "post"],
@@ -31,6 +31,12 @@ AIRPORTS = {
                         },
                         "cost_delivered": "0"}}}}}, summary="Create Order", description="Creates a new order for delivery based on user coordinates and items to be delivered.")
 async def create_order(request: Request, data: CreateOrder):
+    if not settings.YOOKASSA_SHOP_ID or not settings.YOOKASSA_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Yookassa credentials are not configured")
+    if not data.coordinates or not data.delivered or not data.cost_delivered:
+        raise HTTPException(status_code=400, detail="Invalid input data. Coordinates, delivered items, and cost delivered are required.")
+    if not isinstance(data.coordinates, tuple) or len(data.coordinates) != 2:
+        raise HTTPException(status_code=400, detail="Coordinates must be a tuple of (latitude, longitude).")
     user = await get_user(request, db)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")

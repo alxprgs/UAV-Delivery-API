@@ -17,7 +17,7 @@ async def set_user_password_by_admin(request: Request, data: UserSetPasswordByAd
         )
     
     try:
-        hashed_password = create_hash(data.password)
+        hashed_password = create_hash(data.new_password)
         result = await db["users"].update_one(
             {"login": data.login},
             {"$set": {"password": hashed_password}}
@@ -29,7 +29,7 @@ async def set_user_password_by_admin(request: Request, data: UserSetPasswordByAd
                 content={"status": False, "message": "User not found or password already set."}
             )
         
-        user_login = await get_user_login(request=request)
+        user_login = await get_user_login(request=request, database=db)
         await log_system(
             message=f"Password for user '{data.login}' set by {user_login}."
         )

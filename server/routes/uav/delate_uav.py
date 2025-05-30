@@ -23,7 +23,7 @@ async def delete_uav(request: Request, data: DeleteUAVScheme) -> JSONResponse:
                 content={"status": False, "message": "UAV not found."}
             )
         
-        user_login = await get_user_login(request=request)
+        user_login = await get_user_login(request=request, database=db)
         await log_system(
             message=f"UAV '{data.serial_number}' deleted by {user_login}."
         )
