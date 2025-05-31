@@ -11,8 +11,9 @@ from server.core.config import settings
 from server.core.database.mongodb import connect_mongo
 from server.core.database.mysql import connect_mysql
 from server.core.database.redis import connect_redis
-from server.core.root_user import root_user
-from server.core.tags_metadata import tags_metadata
+from server.core.RootUserCreate import root_user
+from server.core.TagsMetadata import tags_metadata
+from server.routes.user import UserAuthCheck, UserCheckPermissions, UserLogin, UserLogout, UserRegistration
 
 
 class BlockMethodsMiddleware(BaseHTTPMiddleware):
@@ -37,10 +38,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         await conn.run_sync(metadata.create_all)
     redis_client = await connect_redis(show_log=True)
     await root_user()
-    from server.routes.user import registration, login, logout, check_auth, check_permissions, set_permission
+    from server.routes.user import UserPermissionSet
     from server.routes.files import robots, sitemap, ddos_tester
-    from server.routes.orders import create_order
-    from server.routes.uav import add_uav
+    from server.routes.orders import OrderCreate
+    from server.routes.uav import UavAdd
     yield
     if client:
         client.close()

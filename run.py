@@ -1,6 +1,6 @@
 import uvicorn
 import asyncio
-from server.core.logging_module import logger
+from server.core.LoggingModule import logger
 from server.core.config import settings
 
 async def main():

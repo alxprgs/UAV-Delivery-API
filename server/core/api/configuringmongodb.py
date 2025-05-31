@@ -1,4 +1,4 @@
-from server.core.database.mongodb import connect_mongo
+from server.core.database.MongoDB import connect_mongo
 
 async def conf_mongodb():
     db, client = await connect_mongo(show_log=False)

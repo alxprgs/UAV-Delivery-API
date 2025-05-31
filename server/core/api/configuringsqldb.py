@@ -3,8 +3,8 @@ from sqlalchemy import Table, Column, Integer, String, DateTime, MetaData, text
 
 metadata = MetaData()
 
-registration_logs = Table(
-    "registration_logs", metadata,
+RegistrationLogs = Table(
+    "RegistrationLogs", metadata,
     Column("id", Integer, primary_key=True),
     Column("login", String(32), nullable=False),
     Column("ip_address", String(45), nullable=False),
@@ -13,8 +13,8 @@ registration_logs = Table(
     extend_existing=True,
 )
 
-login_logs = Table(
-    "login_logs", metadata,
+LoginLogs = Table(
+    "LoginLogs", metadata,
     Column("id", Integer, primary_key=True),
     Column("login", String(32), nullable=False),
     Column("ip_address", String(45), nullable=False),
@@ -23,8 +23,8 @@ login_logs = Table(
     extend_existing=True
 )
 
-system_logs = Table(
-    "system_logs", metadata,
+SystemLogs = Table(
+    "SystemLogs", metadata,
     Column("id", Integer, primary_key=True),
     Column("message", String(128), nullable=False),
     Column("timestamp", DateTime, server_default=text("CURRENT_TIMESTAMP")),
@@ -41,8 +41,8 @@ logs = Table(
     extend_existing=True
 )
 
-permission_logs = Table(
-    "permission_logs", metadata,
+Permissionlogs = Table(
+    "Permissionlogs", metadata,
     Column("id", Integer, primary_key=True),
     Column("message", String(128), nullable=False),
     Column("timestamp", DateTime, server_default=text("CURRENT_TIMESTAMP")),
