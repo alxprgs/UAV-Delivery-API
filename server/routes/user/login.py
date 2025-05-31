@@ -12,7 +12,7 @@ from server.core.api.schemes import UserAuthorization
 from server.core.config import settings
 from server.core.functions.hash import verify_hash
 from server.core.functions.mongodb import check_connection
-from server.core.logging import logger
+from server.core.logging_module import logger
 
 MAX_ATTEMPTS = 5
 WINDOW_MINUTES = 15

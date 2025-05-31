@@ -13,7 +13,7 @@ from server.core.api.schemes import UserRegistration
 from server.core.config import settings
 from server.core.functions.hash import create_hash
 from server.core.functions.mongodb import check_connection
-from server.core.logging import logger
+from server.core.logging_module import logger
 
 MAX_REG_ATTEMPTS = 5
 REG_WINDOW_MINUTES = 30

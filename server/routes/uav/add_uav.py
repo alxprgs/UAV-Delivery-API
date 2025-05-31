@@ -1,5 +1,5 @@
 from server import app, db
-from server.core.logging import logger
+from server.core.logging_module import logger
 from fastapi import Request
 from server.core.functions.mongodb import check_permissions
 from server.core.api.schemes import AddUAVScheme

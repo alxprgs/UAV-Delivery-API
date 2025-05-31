@@ -31,6 +31,16 @@ system_logs = Table(
     extend_existing=True
 )
 
+logs = Table(
+    "logs", metadata,
+    Column("id", Integer, primary_key=True),
+    Column("action", String(128), nullable=False),
+    Column("user_login", String(32), nullable=False),
+    Column("details", String(256), nullable=True),
+    Column("timestamp", DateTime, server_default=text("CURRENT_TIMESTAMP")),
+    extend_existing=True
+)
+
 permission_logs = Table(
     "permission_logs", metadata,
     Column("id", Integer, primary_key=True),

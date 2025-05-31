@@ -3,7 +3,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from server.core.api.schemes import DeleteBaseScheme
 from server.core.functions.mongodb import check_permissions, get_user_login
-from server.core.logging import logger
+from server.core.logging_module import logger
 from server.core.functions.sqldb import log_system
 
 @app.post("/v1/base/delete_base", tags=["base", "post"], summary="Delete base", description="Deletes a base from the database if user has the required permissions.")

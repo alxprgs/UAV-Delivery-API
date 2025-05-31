@@ -7,7 +7,7 @@ from server.core.api.schemes import CreateOrder
 from geopy.distance import geodesic
 from yookassa import Payment, Configuration
 from decimal import Decimal, ROUND_HALF_UP
-from server.core.logging import logger
+from server.core.logging_module import logger
 import uuid
 import asyncio
 import datetime

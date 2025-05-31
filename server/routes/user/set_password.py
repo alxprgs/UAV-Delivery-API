@@ -5,7 +5,7 @@ from server.core.api.schemes import UserSetPasswordByAdmin
 from server.core.functions.hash import create_hash
 from server.core.functions.mongodb import check_permissions, get_user_login
 from server.core.functions.sqldb import log_system
-from server.core.logging import logger
+from server.core.logging_module import logger
 
 @app.post("/v1/user/set_password", tags=["user", "post"], summary="Set user password by admin", description="Allows an admin to set a password for a user.")
 async def set_user_password_by_admin(request: Request, data: UserSetPasswordByAdmin) -> JSONResponse:

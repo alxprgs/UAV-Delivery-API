@@ -1,6 +1,6 @@
 from server.core.api.schemes import UserRootCreate
 from server.core.database.mongodb import connect_mongo
-from server.core.logging import logger
+from server.core.logging_module import logger
 from pymongo.errors import PyMongoError
 from sqlalchemy.exc import SQLAlchemyError
 from server.core.functions.sqldb import log_system

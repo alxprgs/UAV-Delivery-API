@@ -4,9 +4,11 @@ from fastapi import Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo.errors import ConnectionFailure
 
+from server import engine
 from server.core.config import settings
-from server.core.logging import logger
+from server.core.logging_module import setup_logger
 
+logger = setup_logger(engine=engine)
 async def get_user(request: Request, database: AsyncIOMotorDatabase) -> Optional[dict]:
     token = request.cookies.get('token')
     if not token:

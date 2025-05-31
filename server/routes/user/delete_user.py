@@ -2,7 +2,7 @@ from server import app, db
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from server.core.api.schemes import UserDelete
-from server.core.logging import logger
+from server.core.logging_module import logger
 from server.core.functions.mongodb import check_permissions, get_user_login
 from server.core.functions.sqldb import log_system
 

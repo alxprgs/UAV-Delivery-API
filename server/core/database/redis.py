@@ -1,9 +1,10 @@
 from redis.asyncio import Redis
 
+from server import engine
 from server.core.config import settings
-from server.core.logging import logger
+from server.core.logging_module import setup_logger
 
-
+logger = setup_logger()
 async def connect_redis(show_log: bool = True):
     redis_client = Redis(
         host=settings.REDIS_HOST,
@@ -14,7 +15,6 @@ async def connect_redis(show_log: bool = True):
         socket_timeout=5,
         retry_on_timeout=True
     )
-
     try:
         if await redis_client.ping():
             if show_log:
